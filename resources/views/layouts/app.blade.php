@@ -11,7 +11,10 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
-    <link href="/css/app.css" rel="stylesheet">
+    <link href="{{ elixir('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ elixir('css/font.css') }}" rel="stylesheet">
+    <link href="{{ elixir('css/font-awesome.min.css') }}" rel="stylesheet">
+    {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
 
     <!-- Scripts -->
     <script>
@@ -42,7 +45,7 @@
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
-                    &nbsp;
+                    @yield('user_menus')
                 </ul>
 
                 <!-- Right Side Of Navbar -->
@@ -80,6 +83,8 @@
     @yield('content')
 
     <!-- Scripts -->
-    <script src="/js/app.js"></script>
+    <script src="{{ elixir('js/jquery.min.js') }}"></script>
+    <script src="{{ elixir('js/bootstrap.min.js') }}"></script>
+    {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
 </body>
 </html>
