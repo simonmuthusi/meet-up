@@ -1,5 +1,7 @@
 <?php
 
+use App\Event;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,9 +13,28 @@
 |
 */
 
+/**
+ * View All Events
+ * All can view events
+ */
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('home', [
+        'events' => Event::orderBy('created_at', 'asc')->get()
+    ]);
 });
+
+
+/**
+ * Delete Event
+ * Only aunthenticated owners of events are able to delete an event
+ */
+Route::delete('/event/{id}', function ($id) {
+    Task::findOrFail($id)->delete();
+
+    return redirect('/');
+})->middleware('auth');;
+
 
 Auth::routes();
 
