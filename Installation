@@ -1,0 +1,4 @@
+Installation
+
+composer require illuminate/html -- to create forms automatically
+composer require "laravelcollective/html":"^5.2.0"

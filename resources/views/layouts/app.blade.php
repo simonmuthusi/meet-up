@@ -14,6 +14,8 @@
     <link href="{{ elixir('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ elixir('css/font.css') }}" rel="stylesheet">
     <link href="{{ elixir('css/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ elixir('css/jquery-ui.css') }}" rel="stylesheet">
     {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
 
     <!-- Scripts -->
@@ -22,6 +24,14 @@
             'csrfToken' => csrf_token(),
         ]); ?>
     </script>
+      <script>
+  $( function() {
+    $( ".datepicker" ).datepicker({
+      changeMonth: true,
+      changeYear: true
+    });
+  } );
+  </script>
 </head>
 <body>
     <nav class="navbar navbar-default navbar-static-top">
@@ -84,6 +94,7 @@
 
     <!-- Scripts -->
     <script src="{{ elixir('js/jquery.min.js') }}"></script>
+    <script src="{{ elixir('js/jquery-ui.js') }}"></script>
     <script src="{{ elixir('js/bootstrap.min.js') }}"></script>
     {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
 </body>

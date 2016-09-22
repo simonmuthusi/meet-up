@@ -19,23 +19,25 @@ use App\Event;
  */
 
 Route::get('/', function () {
-    return view('home', [
+    return view('events.index', [
         'events' => Event::orderBy('created_at', 'asc')->get()
     ]);
 });
-
 
 /**
  * Delete Event
  * Only aunthenticated owners of events are able to delete an event
  */
 Route::delete('/event/{id}', function ($id) {
-    Task::findOrFail($id)->delete();
+    Event::findOrFail($id)->delete();
 
     return redirect('/');
-})->middleware('auth');;
+})->middleware('auth');
 
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+// Route::get('/events/index', 'EventController@index');
+// Route::get('/events/show/{id}', 'EventController@show');
+Route::resource('events', 'EventController');
