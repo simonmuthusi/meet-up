@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Event;
+use App\User;
 
 class Event extends Model
 {
@@ -16,4 +18,12 @@ class Event extends Model
         'attachment',
         'send_notification'
     ];
+
+    /**
+     * The users belonging to this event
+     */
+    public function users()
+    {
+        return $this->belongsToMany('App\User');
+    }
 }

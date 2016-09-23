@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div id="left-panel" class="col-md-8 col-md-offset-0">
+        <div id="left-panel" class="col-md-7 col-md-offset-0">
                 @yield('view_event')
         </div>
 

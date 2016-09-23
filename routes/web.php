@@ -41,3 +41,28 @@ Route::get('/home', 'HomeController@index');
 // Route::get('/events/index', 'EventController@index');
 // Route::get('/events/show/{id}', 'EventController@show');
 Route::resource('events', 'EventController');
+
+Route::patch('/user/events',[
+    'as' => 'events.userevents',
+    'uses' => 'EventController@userevents'
+]);
+
+Route::get('/event/postpone/{id}',[
+    'as' => 'events.postponeevents',
+    'uses' => 'EventController@postpone'
+]);
+
+Route::get('/event/activate/{id}',[
+    'as' => 'events.activateevent',
+    'uses' => 'EventController@activate'
+]);
+
+Route::get('/event/message/{id}',[
+    'as' => 'events.messageparticipants',
+    'uses' => 'EventController@message'
+]);
+
+Route::patch('/event/email/{id}',[
+    'as' => 'events.emailparticipants',
+    'uses' => 'EventController@emailparticipants'
+]);

@@ -6,7 +6,11 @@
     Add Event
 </div>
 <div class="panel-body">
+@if (Session::get('postpone'))
+<h3>Editing Event Dates to Postpone "{{ $this_event->name }}"</h3>
+@else
 <h3>Editing Event "{{ $this_event->name }}"</h3>
+@endif
 <hr>
 
 <!-- Display Validation Errors -->
@@ -34,6 +38,7 @@
     {!! Form::label('event_to_date', 'Event To Date:', ['class' => 'control-label']) !!}
     {!! Form::text('event_to_date', null, ['class' => 'form-control datepicker', 'id' => 'datepicker']) !!}
 </div>
+@if(!Session::has('postpone'))
 <div class="form-group">
     {!! Form::label('location', 'Location:', ['class' => 'control-label']) !!}
     {!! Form::text('location', null, ['class' => 'form-control']) !!}
@@ -54,6 +59,7 @@
     {!! Form::label('send_notification', 'Receive Notification:', ['class' => 'control-label']) !!}
     {!! Form::select('send_notification', ['yes','no'], ['class' => 'form-control']) !!}
 </div>
+@endif
 
 {!! Form::submit('Update Event', ['class' => 'btn btn-primary']) !!}
 
