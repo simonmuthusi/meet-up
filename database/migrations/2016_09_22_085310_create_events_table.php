@@ -14,6 +14,7 @@ class CreateEventsTable extends Migration
     private $STATUSES = ['draft','not attending','attending'];
     public function up()
     {
+        Schema::enableForeignKeyConstraints();
         Schema::create('events', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
@@ -23,9 +24,12 @@ class CreateEventsTable extends Migration
             $table->dateTime('event_to_date');
             $table->string('location');
             $table->text('description');
-            $table->string('attachment');
-            $table->enum('status', $this->STATUSES);
+            $table->string('attachment')->nullable();
+            $table->enum('status', $this->STATUSES)->default("draft");
             $table->boolean('send_notification');
+            $table->boolean('is_active')->default(true);
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

@@ -19,23 +19,50 @@ use App\Event;
  */
 
 Route::get('/', function () {
-    return view('home', [
+    return view('events.index', [
         'events' => Event::orderBy('created_at', 'asc')->get()
     ]);
 });
-
 
 /**
  * Delete Event
  * Only aunthenticated owners of events are able to delete an event
  */
 Route::delete('/event/{id}', function ($id) {
-    Task::findOrFail($id)->delete();
+    Event::findOrFail($id)->delete();
 
     return redirect('/');
-})->middleware('auth');;
+})->middleware('auth');
 
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+// Route::get('/events/index', 'EventController@index');
+// Route::get('/events/show/{id}', 'EventController@show');
+Route::resource('events', 'EventController');
+
+Route::patch('/user/events',[
+    'as' => 'events.userevents',
+    'uses' => 'EventController@userevents'
+]);
+
+Route::get('/event/postpone/{id}',[
+    'as' => 'events.postponeevents',
+    'uses' => 'EventController@postpone'
+]);
+
+Route::get('/event/activate/{id}',[
+    'as' => 'events.activateevent',
+    'uses' => 'EventController@activate'
+]);
+
+Route::get('/event/message/{id}',[
+    'as' => 'events.messageparticipants',
+    'uses' => 'EventController@message'
+]);
+
+Route::patch('/event/email/{id}',[
+    'as' => 'events.emailparticipants',
+    'uses' => 'EventController@emailparticipants'
+]);
