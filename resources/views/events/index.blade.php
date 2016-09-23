@@ -25,6 +25,7 @@
                             <td class="table-text"><div>{{ $event->event_from_date }}</div></td>
 
                             <!-- Event Delete Button -->
+                            @if (Auth::check())
                             <td>
                                 <form action="{{ url('event/'.$event->id) }}" class="form-inline" method="POST">
                                     {{ csrf_field() }}
@@ -48,6 +49,7 @@
                                 </button>
                                 </a>
                             </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>
