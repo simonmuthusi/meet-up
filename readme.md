@@ -19,6 +19,9 @@ The application is written in Laravel (php) framework.
 - A User can view their own page to see what events they are going to
 - A User can view another User's page to see what events they are going to
 
+# Documentation
+- see the wiki section <a href="https://github.com/simonmuthusi/meet-up/wiki" target="_blank">here</a>
+
 # License
 
 The application extend Laravel framework open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
