@@ -4,40 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Event;
+use App\User;
 use Auth;
 use Carbon\Carbon;
 use Session;
 use Mail;
-/**
-class EventController extends Controller
-{
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     *
-    public function __construct()
-    {
-        // $this->middleware('auth');
-    }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     *
-    public function index()
-    {
-        return view('events.create');
-    }
-
-    public function create()
-    {
-        return view('events.create');
-    }
-}**/
 
 class EventController extends Controller {
+    private $STATUSES = ['draft','not attending','attending'];
 
     /**
      * Create a new controller instance.
@@ -57,12 +31,13 @@ class EventController extends Controller {
      */
     public function index()
     {
-        //
-        $events = Event::all();
+        $events = Event::orderBy('created_at', 'asc')
+        ->where('is_active',true)
+        ->get();
 
-        // return view('events.index')->withTasks($events);
         return view('events.index', [
-            'events' => Event::orderBy('created_at', 'asc')->get()
+            'events' => $events,
+            'statuses' => $this->STATUSES
         ]);
     }
 
@@ -93,19 +68,23 @@ class EventController extends Controller {
             'send_notification' => 'required',
         ]);
 
+        $send_notification = ($request->send_notification == 'yes' ? true : false);
+        $is_active = ($request->status == 'yes' ? true : false);
+
         $input = $request->all();
-        $request->event_from_date = Carbon::now();
-        $request->event_to_date = Carbon::now();
+        $event_from_date = Carbon::parse($request->event_from_date);
+        $event_to_date = Carbon::parse($request->event_to_date);
 
         $event = Event::create(array(
             "name" => $request->name,
-            "event_from_date" => Carbon::now(),
-            "event_to_date" => Carbon::now(),
+            "event_from_date" => $event_from_date,
+            "event_to_date" => $event_to_date,
             "location" => $request->location,
             "description" => $request->description,
             "attachment" => $request->attachment,
             "status" => "draft",
-            "send_notification" => $request->send_notification,
+            "send_notification" => $send_notification,
+            "is_active" => $is_active,
             "user_id" => Auth::user()->id
             ));
 
@@ -168,11 +147,16 @@ class EventController extends Controller {
      */
     public function edit($id)
     {
-        // $event = Event::findOrFail($id);
+        $events = Event::orderBy('created_at', 'asc')
+        ->where('is_active',true)
+        ->get();
+
+        $this_event = Event::findOrFail($id);
 
         return view('events.edit', [
-            'events' => Event::orderBy('created_at', 'asc')->get(),
-            'this_event' =>Event::findOrFail($id)
+            'events' => $events,
+            'this_event' => $this_event,
+            'statuses' => $this->STATUSES
         ]);
 
         // return view('events.edit')->withTask($event);
@@ -201,11 +185,14 @@ class EventController extends Controller {
 
         $input = $request->all();
 
-        // $task->fill($input)->save();
+        
+        $event_from_date = Carbon::parse($request->event_from_date);
+        $event_to_date = Carbon::parse($request->event_to_date);
+
         $event->fill(array(
             "name" => $request->name,
-            "event_from_date" => Carbon::now(),
-            "event_to_date" => Carbon::now(),
+            "event_from_date" => $event_from_date,
+            "event_to_date" => $event_to_date,
             "location" => $request->location,
             "description" => $request->description,
             "attachment" => $request->attachment,
@@ -237,15 +224,9 @@ class EventController extends Controller {
      */
     public function userevents($id)
     {
-        // $event = Event::findOrFail($id);
-
-        return view('events.edit', [
-            'events' => Event::orderBy('created_at', 'asc')->get(),
-            'this_event' =>Event::findOrFail($id)
+        return view('events.index', [
+            'events' => Auth::user()->events
         ]);
-
-        // return view('events.edit')->withTask($event);
-
     }
 
     /*
@@ -340,6 +321,38 @@ class EventController extends Controller {
         Session::flash('mail_message', 'message send successfully');
 
         return redirect()->back();
+    }
+
+    /*
+     * User register for event
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function user_register($eventid)
+    {
+        $event = Event::findOrFail($eventid);
+        // $event->users()->associate(Auth::user());
+        // $event->users.save(Auth::user());
+        if($event->users()->exists(Auth::user()))
+        {
+            $event->users()->detach(Auth::user());
+        }
+        else
+        {
+            $event->users()->attach(Auth::user());
+        }
+        $event->save();
+        return redirect()->back();
+
+        // $is_active = !$event->is_active;
+        // $event->is_active = $is_active;
+        // $event->save();
+
+        return view('events.view', [
+            'event' => $event,
+            'is_registered'=>$event->users->contains(Auth::user())
+        ]);
     }
 
 

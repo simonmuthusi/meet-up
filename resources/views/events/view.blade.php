@@ -96,10 +96,10 @@ Manage Event
     @endif
 
     @if ($is_registered)
-    <li><a href="{{ route('events.userevents', $event->id) }}">De-register</a></li>
+    <li><a href="{{ route('events.user_register', $event->id) }}">De-register</a></li>
     @elseif ($event->user_id === Auth::user()->id )
     @else
-    <li><a href="{{ route('events.userevents', $event->id) }}">Register</a></li>
+    <li><a href="{{ route('events.user_register', $event->id) }}">Register</a></li>
     @endif
 
     <li><a href="{{ route('events.userevents', $event->id) }}">View All my Events</a></li> 

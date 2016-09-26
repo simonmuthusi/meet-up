@@ -17,12 +17,10 @@ use App\Event;
  * View All Events
  * All can view events
  */
-
-Route::get('/', function () {
-    return view('events.index', [
-        'events' => Event::orderBy('created_at', 'asc')->get()
-    ]);
-});
+Route::get('/',[
+    'as' => 'events.index',
+    'uses' => 'EventController@index'
+]);
 
 /**
  * Delete Event
@@ -37,12 +35,12 @@ Route::delete('/event/{id}', function ($id) {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+Route::get('/home', 'EventController@index');
 // Route::get('/events/index', 'EventController@index');
 // Route::get('/events/show/{id}', 'EventController@show');
 Route::resource('events', 'EventController');
 
-Route::patch('/user/events',[
+Route::get('/user/events/{id}',[
     'as' => 'events.userevents',
     'uses' => 'EventController@userevents'
 ]);
@@ -65,4 +63,9 @@ Route::get('/event/message/{id}',[
 Route::patch('/event/email/{id}',[
     'as' => 'events.emailparticipants',
     'uses' => 'EventController@emailparticipants'
+]);
+
+Route::get('/user/register/event/{id}',[
+    'as' => 'events.user_register',
+    'uses' => 'EventController@user_register'
 ]);
