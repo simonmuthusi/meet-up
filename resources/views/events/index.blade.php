@@ -8,7 +8,7 @@
 @section('view_event')
 <div class="panel-body">
 <!-- Current Events -->
-@if (count($events) > 0)
+
     <div class="panel panel-default">
         <div class="panel-heading">
             Current Events
@@ -23,6 +23,7 @@
                     <th>Date</th>
                 </thead>
                 <tbody>
+                @if (count($events) > 0)
                 @if(!Session::has('view_getuserevents'))
                 <tr><td colspan="4" class="text-warning">User signed events</td></tr>
                     @foreach ($events as $event)
@@ -62,7 +63,10 @@
                         </tr>
                     @endforeach
                     @endif
+                    @endif
+                    
                     @if(Session::has('view_userevents'))
+                    @if (count($created_events) > 0)
                     <tr><td colspan="6" class="text-warning">User created events</td></tr>
                         @foreach ($created_events as $event)                        
                         <tr>
@@ -101,8 +105,11 @@
                         </tr>
                     @endforeach
                     @endif
+                    @endif
 
+                    
                     @if(Session::has('view_getuserevents'))
+                    @if (count($created_events) > 0)
                     <tr><td colspan="6" class="text-warning">Events for user {{$sel_user->email}}</td></tr>
                         @foreach ($created_events as $event)                        
                         <tr>
@@ -141,17 +148,12 @@
                         </tr>
                     @endforeach
                     @endif
+                    @endif
                 </tbody>
             </table>
         </div>
         </div>
-@else
-<div class="panel panel-default">
-    <div class="panel-heading">
-        Currently there are no events lined up
-    </div>
-</div>
-@endif
+
 
 </div>
 @endsection
