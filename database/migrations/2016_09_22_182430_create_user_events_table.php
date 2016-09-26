@@ -16,6 +16,7 @@ class CreateUserEventsTable extends Migration
         Schema::create('event_user', function (Blueprint $table) {
             $table->string('event_id');
             $table->string('user_id');
+            $table->primary(['event_id', 'user_id']);
         });
     }
 

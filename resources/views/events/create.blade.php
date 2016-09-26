@@ -39,10 +39,6 @@
 				    {!! Form::text('description', null, ['class' => 'form-control']) !!}
 				</div>
 				<div class="form-group">
-				    {!! Form::label('attachment', 'Attachment:', ['class' => 'control-label']) !!}
-				    {!! Form::file('attachment', null, ['class' => 'form-control']) !!}
-				</div>
-				<div class="form-group">
 				    {!! Form::label('status', 'Status:', ['class' => 'control-label']) !!}
 				    {!! Form::select('status', ['draft','not attending','attending'], ['class' => 'form-control']) !!}
 				</div>

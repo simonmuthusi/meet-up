@@ -32,11 +32,21 @@
 </div>
 <div class="form-group">
     {!! Form::label('event_from_date', 'Event From Date:', ['class' => 'control-label']) !!}
+    <div id="datetimepicker" class="input-append date datepicker">
     {!! Form::text('event_from_date', null, ['class' => 'form-control datepicker']) !!}
+    <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+    </div>
 </div>
 <div class="form-group">
     {!! Form::label('event_to_date', 'Event To Date:', ['class' => 'control-label']) !!}
+    <div id="datetimepicker" class="input-append date datepicker">
     {!! Form::text('event_to_date', null, ['class' => 'form-control datepicker', 'id' => 'datepicker']) !!}
+    <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+    </div>
 </div>
 @if(!Session::has('postpone'))
 <div class="form-group">
@@ -48,12 +58,8 @@
     {!! Form::text('description', null, ['class' => 'form-control']) !!}
 </div>
 <div class="form-group">
-    {!! Form::label('attachment', 'Attachment:', ['class' => 'control-label']) !!}
-    {!! Form::file('attachment', null, ['class' => 'form-control']) !!}
-</div>
-<div class="form-group">
     {!! Form::label('status', 'Status:', ['class' => 'control-label']) !!}
-    {!! Form::select('status', ['draft','not attending','attending'], ['class' => 'form-control']) !!}
+    {!! Form::select('status', $statuses, ['class' => 'form-control']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('send_notification', 'Receive Notification:', ['class' => 'control-label']) !!}
@@ -68,20 +74,25 @@
 </div> 
 </div>
 
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>  
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-  <link rel="stylesheet" href="http://trentrichardson.com/examples/timepicker/jquery-ui-timepicker-addon.css">
-  <script src="http://trentrichardson.com/examples/timepicker/jquery-ui-timepicker-addon.js"></script>
-  <script>
-  $( function() {
-    $( ".datepicker" ).datepicker({
-      changeMonth: true,
-      changeYear: true
-    });
-  } );
-  </script>
+ <link rel="stylesheet" type="text/css" media="screen"
+     href="http://tarruda.github.com/bootstrap-datetimepicker/assets/css/bootstrap-datetimepicker.min.css">
+     <script type="text/javascript"
+     src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js">
+    </script> 
+    <script type="text/javascript"
+     src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js">
+    </script>
+    <script type="text/javascript"
+     src="http://tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.min.js">
+    </script>
+    <script type="text/javascript"
+     src="http://tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.pt-BR.js">
+    </script>
+    <script type="text/javascript">
+      $('.datepicker').datetimepicker({
+        format: 'yyyy-MM-dd hh:mm:ss',
+        language: 'en'
+      });
+    </script>
 
 @endsection

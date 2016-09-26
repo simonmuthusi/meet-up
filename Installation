@@ -2,3 +2,6 @@ Installation
 
 composer require illuminate/html -- to create forms automatically
 composer require "laravelcollective/html":"^5.2.0"
+
+"guzzlehttp/guzzle": "~5.3|~6.0
+composer require swiftmailer/swiftmailer

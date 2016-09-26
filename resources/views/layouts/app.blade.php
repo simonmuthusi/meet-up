@@ -11,6 +11,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
+     <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
     <link href="{{ elixir('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ elixir('css/font.css') }}" rel="stylesheet">
     <link href="{{ elixir('css/font-awesome.min.css') }}" rel="stylesheet">
