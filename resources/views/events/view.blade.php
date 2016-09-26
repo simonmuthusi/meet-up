@@ -37,12 +37,12 @@
             </div>
             <div class="form-inline">
                 <label>Receive Notifications ?</label>
-                <div>{{ $event->send_notification }}</div>
+                <div>{{ $event_notification }}</div>
             </div>
             @if ($event->user_id === Auth::user()->id )
             <div class="form-inline">
                 <label>Is Active</label>
-                <div>{{ $event->is_active }}</div>
+                <div>{{ $event_is_active }}</div>
             </div>
             @endif
 
@@ -67,7 +67,7 @@ Users Attending
 <ul>
     @if (count($event->users) > 0)
         @foreach ($event->users as $user)
-            <li>{{ $user->email }}</li>
+            <li><a title="view user events" href="{{ route('events.getuserevents', $user->id) }}">{{ $user->email }}</a></li>
         @endforeach
     @else
         No users signed for event !
@@ -102,7 +102,7 @@ Manage Event
     <li><a href="{{ route('events.user_register', $event->id) }}">Register</a></li>
     @endif
 
-    <li><a href="{{ route('events.userevents', $event->id) }}">View All my Events</a></li> 
+    <li><a href="{{ route('events.userevents') }}">View All my Events</a></li> 
 </ul>
 </div>
 </div>

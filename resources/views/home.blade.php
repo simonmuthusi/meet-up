@@ -18,9 +18,8 @@
 
 @section('user_menus')
 @if (Auth::guest())
-    <li><a href="{{ url('/login') }}">View Events</a></li>
 @else
-    <li><a href="{{ url('/login') }}">View Events</a></li>
+    <li><a href="{{ url('/user/events') }}">View My Events</a></li>
 @endif
 
 @endsection

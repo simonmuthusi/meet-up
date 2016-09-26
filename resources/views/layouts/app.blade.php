@@ -90,6 +90,7 @@
             </div>
         </div>
     </nav>
+    <div class="row"><p class="text-muted text-center alert alert-warning">all dates and time in Africa/Nairobi[+0300] timezone</p></div>
 
     @yield('content')
 
