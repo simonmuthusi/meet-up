@@ -23,11 +23,13 @@
                     <th>Date</th>
                 </thead>
                 <tbody>
+                @if(!Session::has('view_getuserevents'))
+                <tr><td colspan="4" class="text-warning">User signed events</td></tr>
                     @foreach ($events as $event)
                         <tr>
                             <td class="table-text"><div>{{ $event->name }} </div></td>
                             <td class="table-text"><div>{{ $event->location }}</div></td>
-                            <td class="table-text"><div>{{ $event->event_from_date }}</div></td>
+                            <td class="table-text"><div>{{ date('F d, Y H:i', strtotime($event->event_from_date)) }}</div></td>
 
                             <!-- Event Delete Button -->
                             @if (Auth::check())
@@ -59,6 +61,86 @@
                             @endif
                         </tr>
                     @endforeach
+                    @endif
+                    @if(Session::has('view_userevents'))
+                    <tr><td colspan="6" class="text-warning">User created events</td></tr>
+                        @foreach ($created_events as $event)                        
+                        <tr>
+                            <td class="table-text"><div>{{ $event->name }} </div></td>
+                            <td class="table-text"><div>{{ $event->location }}</div></td>
+                            <td class="table-text"><div>{{ date('F d, Y H:i', strtotime($event->event_from_date)) }}</div></td>
+
+                            <!-- Event Delete Button -->
+                            @if (Auth::check())
+                            @if ($event->user_id === Auth::user()->id )
+                            <td>
+                                <form action="{{ url('event/'.$event->id) }}" class="form-inline" method="POST">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fa fa-btn fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                            <a href="{{ route('events.edit', $event->id) }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-btn fa-edit"></i>
+                                </button>
+                                </a>
+                            </td>
+                            @endif
+                            <td>
+                            <a href="{{ route('events.show', $event->id) }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-btn fa-eye"></i>
+                                </button>
+                                </a>
+                            </td>
+                            @endif
+                        </tr>
+                    @endforeach
+                    @endif
+
+                    @if(Session::has('view_getuserevents'))
+                    <tr><td colspan="6" class="text-warning">Events for user {{$sel_user->email}}</td></tr>
+                        @foreach ($created_events as $event)                        
+                        <tr>
+                            <td class="table-text"><div>{{ $event->name }} </div></td>
+                            <td class="table-text"><div>{{ $event->location }}</div></td>
+                            <td class="table-text"><div>{{ date('F d, Y H:i', strtotime($event->event_from_date)) }}</div></td>
+
+                            <!-- Event Delete Button -->
+                            @if (Auth::check())
+                            @if ($event->user_id === $sel_user->id )
+                            <td>
+                                <form action="{{ url('event/'.$event->id) }}" class="form-inline" method="POST">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fa fa-btn fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                            <a href="{{ route('events.edit', $event->id) }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-btn fa-edit"></i>
+                                </button>
+                                </a>
+                            </td>
+                            @endif
+                            <td>
+                            <a href="{{ route('events.show', $event->id) }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-btn fa-eye"></i>
+                                </button>
+                                </a>
+                            </td>
+                            @endif
+                        </tr>
+                    @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>

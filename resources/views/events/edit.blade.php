@@ -47,6 +47,11 @@
         <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
       </span>
     </div>
+    @if(Session::has('postpone'))
+    <input type="hidden" name="action_type" id="action_type" value="postpone">
+    @else
+    <input type="hidden" name="action_type" id="action_type" value="edit">
+    @endif
 </div>
 @if(!Session::has('postpone'))
 <div class="form-group">
@@ -58,12 +63,16 @@
     {!! Form::text('description', null, ['class' => 'form-control']) !!}
 </div>
 <div class="form-group">
-    {!! Form::label('status', 'Status:', ['class' => 'control-label']) !!}
-    {!! Form::select('status', $statuses, ['class' => 'form-control']) !!}
-</div>
-<div class="form-group">
     {!! Form::label('send_notification', 'Receive Notification:', ['class' => 'control-label']) !!}
-    {!! Form::select('send_notification', ['yes','no'], ['class' => 'form-control']) !!}
+    <select id="send_notification" name="send_notification" class="form-cotrol">
+    @foreach ($send_notification as $not)
+    @if ($not==$event_not)
+    <option value="{{$not}}" selected>{{ $not }}</option>
+    @else
+    <option value="{{$not}}">{{ $not }}</option>
+    @endif
+    @endforeach      
+    </select>
 </div>
 @endif
 

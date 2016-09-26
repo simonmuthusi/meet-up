@@ -12,6 +12,7 @@ use Mail;
 
 class EventController extends Controller {
     private $STATUSES = ['draft','not attending','attending'];
+    private $NOT_STATUS = ['yes','no'];
 
     /**
      * Create a new controller instance.
@@ -90,37 +91,10 @@ class EventController extends Controller {
 
         $event->user_id = Auth::user()->id;
         $event->save();
-        // $event = new Event::create(array(
-        //     "name" => $request->name,
-        //     "event_from_date" => Carbon::now(),
-        //     "event_to_date" => Carbon::now(),
-        //     "location" => $request->location,
-        //     "description" => $request->description,
-        //     "attachment" => $request->attachment,
-        //     "status" => "draft",
-        //     "send_notification" => $request->send_notification
-        //     ));
-        // $event = new Event();
-        // $event->name = $request->name;
-        // $event->event_from_date = Carbon::now();
-        // $event->event_to_date = Carbon::now();
-        // $event->location = $request->location;
-        // $event->description = $request->description;
-        // $event->attachment = $request->attachment;
-        // $event->status ="draft";
-        // $event->send_notification = $request->send_notification;
-        // $event->user()->associate(Auth::user());
-        // $event->save();
-
-        // $event->users.save(Auth::user());
-        // $event->users()->attach(Auth::user());
 
         Session::flash('flash_message', 'Event successfully created');
 
         return redirect()->back();
-        // dd($request->description);
-
-        // dd($request->all());
     }
 
     /**
@@ -132,8 +106,13 @@ class EventController extends Controller {
     public function show($id)
     {
         $event = Event::findOrFail($id);
+        $event_notification = $this->NOT_STATUS[$event->send_notification];
+        $event_is_active = $this->NOT_STATUS[$event->is_active];
+
         return view('events.view', [
             'event' => $event,
+            'event_notification' => $event_notification,
+            'event_is_active' => $event_is_active,
             'is_registered'=>$event->users->contains(Auth::user())
         ]);
 
@@ -147,16 +126,23 @@ class EventController extends Controller {
      */
     public function edit($id)
     {
-        $events = Event::orderBy('created_at', 'asc')
-        ->where('is_active',true)
-        ->get();
+        $user_created_events = Event::where('user_id',Auth::user()->id)->get();
+        $user_signed_events = Auth::user()->events->union($user_created_events);
 
         $this_event = Event::findOrFail($id);
 
+        Session::flash('view_userevents', true);
+
+
+        $event_not = ($this_event->send_notification == true ? "yes" : "no");
+
         return view('events.edit', [
-            'events' => $events,
+            'events' => $user_signed_events,
             'this_event' => $this_event,
-            'statuses' => $this->STATUSES
+            'statuses' => $this->STATUSES,
+            'send_notification' => $this->NOT_STATUS,
+            'event_not' => $event_not,
+            'created_events' => $user_created_events,
         ]);
 
         // return view('events.edit')->withTask($event);
@@ -173,19 +159,46 @@ class EventController extends Controller {
     {
         $event = Event::findOrFail($id);
 
-        $this->validate($request, [
-            'name' => 'required',
-            'event_from_date' => 'required',
-            'event_to_date' => 'required',
-            'location' => 'required',
-            'description' => 'required',
-            'description' => 'required',
-            'send_notification' => 'required',
-        ]);
+        if($request->action_type=="edit")
+        {
+            $this->validate($request, [
+                'name' => 'required',
+                'event_from_date' => 'required',
+                'event_to_date' => 'required',
+                'location' => 'required',
+                'description' => 'required',
+                'description' => 'required',
+                'send_notification' => 'required',
+            ]);
+        }
+        else
+        {
+            $this->validate($request, [
+                'name' => 'required',
+                'event_from_date' => 'required',
+                'event_to_date' => 'required'
+            ]);
+
+            $event_from_date = Carbon::parse($request->event_from_date);
+            $event_to_date = Carbon::parse($request->event_to_date);
+
+            $event->fill(array(
+            "name" => $request->name,
+            "event_from_date" => $event_from_date,
+            "event_to_date" => $event_to_date,
+            ))->save();
+
+        Session::flash('flash_message', 'Event postponed to date: '.$event_from_date);
+
+        return redirect()->back();
+        }
 
         $input = $request->all();
 
-        
+        $send_notification = ($request->send_notification == 'yes' ? true : false);
+        $is_active = ($request->status == 'yes' ? true : false);
+
+
         $event_from_date = Carbon::parse($request->event_from_date);
         $event_to_date = Carbon::parse($request->event_to_date);
 
@@ -195,9 +208,7 @@ class EventController extends Controller {
             "event_to_date" => $event_to_date,
             "location" => $request->location,
             "description" => $request->description,
-            "attachment" => $request->attachment,
-            "status" => "draft",
-            "send_notification" => $request->send_notification
+            "send_notification" => $send_notification
             ))->save();
 
         Session::flash('flash_message', 'Event successfully updated');
@@ -222,10 +233,38 @@ class EventController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function userevents($id)
+    public function userevents()
     {
+        
+        $user_created_events = Event::where('user_id',Auth::user()->id)->get();
+        $user_signed_events = Auth::user()->events;
+
+        Session::flash('view_userevents', true);
+
         return view('events.index', [
-            'events' => Auth::user()->events
+            'events' => $user_signed_events,
+            'created_events' => $user_created_events,
+        ]);
+    }
+
+    /**
+     * Get events for a selected user.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function getuserevents($userid)
+    {
+        $user = User::findOrFail($userid);
+        $user_created_events = Event::where('user_id',Auth::user()->id)->get();
+        $user_signed_events = $user->events;
+
+        Session::flash('view_getuserevents', true);
+
+        return view('events.index', [
+            'events' => $user_signed_events,
+            'created_events' => $user_created_events,
+            'sel_user' => $user,
         ]);
     }
 
@@ -242,9 +281,14 @@ class EventController extends Controller {
         $event->is_active = $is_active;
         $event->save();
 
+        $event_notification = $this->NOT_STATUS[$event->send_notification];
+        $event_is_active = $this->NOT_STATUS[$event->is_active];
+
         return view('events.view', [
             'event' => $event,
-            'is_registered'=>$event->users->contains(Auth::user())
+            'is_registered'=>$event->users->contains(Auth::user()),
+            'event_notification' => $event_notification,
+            'event_is_active' => $event_is_active,
         ]);
     }
 
@@ -256,7 +300,6 @@ class EventController extends Controller {
      */
     public function postpone($eventid)
     {
-        // $event = Event::findOrFail($id);
         Session::flash('postpone', true);
 
         return view('events.edit', [
@@ -282,9 +325,14 @@ class EventController extends Controller {
         $event->is_active = $is_active;
         $event->save();
 
+        $event_notification = $this->NOT_STATUS[$event->send_notification];
+        $event_is_active = $this->NOT_STATUS[$event->is_active];
+
         return view('events.message', [
             'event' => $event,
-            'is_registered'=>$event->users->contains(Auth::user())
+            'is_registered'=>$event->users->contains(Auth::user()),
+            'event_notification' => $event_notification,
+            'event_is_active' => $event_is_active,
         ]);
 
     }
@@ -305,18 +353,41 @@ class EventController extends Controller {
 
         $input = $request->all();
 
-        $emails = ["simonmuthusi@gmail.com"];
-        $subject = "Alerts on Event: "+$event->name;
+        // get app all participants
+        // If no users return, else send message
+        $participants = array();
+        if(count($event->users)>0)
+        {
+            $i=0;
+            foreach($event->users as $user)
+            {
+                $participants[$i] = $user->email;
+                $i++;
+            }
+        }
+        else
+        {
+            Session::flash('mail_message', 'No participants for this event');
 
-        // Mail::send('emails.lead', [], function($message) use ($emails, $subject)
-        // {    
-        //     $message->to($emails)->subject($subject);    
-        // });
-        // Mail::send('emails.reminder', [], function ($m) use ($subject) {
-        //     $m->from('hello@app.com', 'Your Application');
+            return redirect()->back();
+        }
 
-        //     $m->to("simonmuthusi@gmail.com", "Simon Muthusi")->subject('Your Reminder!');
-        // });
+        $emails = $participants;
+        $subject_body = "Alerts on Event: ".$event->name;
+        $message_body = $request->message;
+
+        $mail_data = array(
+            "subject"=>$subject_body,
+            "body"=>$message_body,
+            "participants"=>$participants,
+            );
+
+        Mail::send([], [], function ($message) use ($mail_data) {
+          $message->to($mail_data['participants'])
+            ->subject($mail_data['subject'])
+            // here comes what you want
+            ->setBody($mail_data['body']);
+        });
 
         Session::flash('mail_message', 'message send successfully');
 
