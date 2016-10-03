@@ -39,21 +39,24 @@
                 <label>Receive Notifications ?</label>
                 <div>{{ $event_notification }}</div>
             </div>
+            @if (Auth::check())
             @if ($event->user_id === Auth::user()->id )
             <div class="form-inline">
                 <label>Is Active</label>
                 <div>{{ $event_is_active }}</div>
             </div>
             @endif
-
-
+            @endif
         </div>
         </div>
 
 </div>
 @endsection
 
+
+
 @section('add_event')
+@if (Auth::check())
 <div class="panel panel-default">
 <div class="panel-heading">
     Right Pannel
@@ -111,4 +114,11 @@ Manage Event
 </div>
 <hr>
 
+@else
+<div class="panel panel-default">
+<div class="panel-heading">
+    Login for more options here
+</div>
+</div>
+@endif
 @endsection

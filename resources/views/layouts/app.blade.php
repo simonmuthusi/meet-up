@@ -33,6 +33,12 @@
     });
   } );
   </script>
+  <style type="text/css">
+    input{
+        height: 35px !important;
+    }
+</style>
+
 </head>
 <body>
     <nav class="navbar navbar-default navbar-static-top">
